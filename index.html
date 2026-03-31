@@ -6,9 +6,26 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="/css/cont-lang.css">
         <style>
+            .language-contract-wrapper {
+                text-align: center;
+                padding: 7% 3.5%;
+                color: #1B1D21;
+                background: url(../images/bg-contract.png);
+                min-height: 100vh;
+                background-size: cover;
+               
+            }
+
+             .language-contract-wrapper h2{
+                margin: 0 0 30px;
+             }
             .contract-box {
                 text-align: center;
                 color: black;
+            }
+            .language-contract-wrapper .contract-box {
+                position: relative;
+                margin: 0 0 120px;
             }
             span {
                 text-decoration: none;
@@ -36,6 +53,11 @@
                 max-width: 300px;
                 min-width: 300px;
             }
+            .language-contract-wrapper .lang-box.contract-box .col {
+                max-width: 180px;
+                min-width: 180px;
+                margin: 0 0 30px;
+            }
             .language-contract-wrapper .contract-box .row {
                 align-items: center;
                 justify-content: center;
@@ -48,6 +70,43 @@
                 display: block;
                 margin: 5px 0;
                 font: 31px/35px 'Sakkal-Majalla-Bold';
+            }
+            .language-contract-wrapper .lang-box.contract-box .col img {
+                max-width: 60px;
+            }
+            .language-contract-wrapper a img {
+                width: 120px;
+                height: auto;
+            }
+            .language-contract-wrapper .container {
+                max-width: 1499px;
+            }
+
+            .language-contract-wrapper .contract-box:after
+ {
+    content: "";
+    background: #ededed;
+    position: absolute;
+    left: 50%;
+    bottom: -70px;
+    height: 3px;
+    width: 200px;
+    margin: 0 0 0 -100px;
+}
+            @media (min-width: 992px) {
+                .container, .container-lg, .container-md, .container-sm {
+                    max-width: 960px;
+                }
+            }
+            @media (min-width: 768px) {
+                .container, .container-md, .container-sm {
+                    max-width: 720px;
+                }
+            }
+            @media (min-width: 576px) {
+                .container, .container-sm {
+                    max-width: 540px;
+                }
             }
         </style>
     </head>
@@ -64,6 +123,7 @@
                             </a>
                         </div>
                     </div>
+                    
                 </div>
                 <div class="contract-box lang-box">
                     <h2>Watch Video/شاهد الفيديو</h2>
