@@ -5,6 +5,51 @@
         <title>Contract Languages</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="/css/cont-lang.css">
+        <style>
+            .contract-box {
+                text-align: center;
+                color: black;
+            }
+            span {
+                text-decoration: none;
+                color: black;
+            }
+            a {
+                text-decoration: none;
+            }
+            .language-contract-wrapper .contract-box .col .cont-lang-box {
+                padding: 20px;
+                border-radius: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                box-shadow: 2px 3px 9px 0px rgba(0, 0, 0, 0.15);
+                -webkit-box-shadow: 2px 3px 9px 0px rgba(0, 0, 0, 0.15);
+                -moz-box-shadow: 2px 3px 9px 0px rgba(0,0,0,0.15);
+            }
+            .language-contract-wrapper a {
+                text-decoration: none;
+                color: #1B1D21;
+                cursor: pointer;
+            }
+            .language-contract-wrapper .contract-box .col {
+                max-width: 300px;
+                min-width: 300px;
+            }
+            .language-contract-wrapper .contract-box .row {
+                align-items: center;
+                justify-content: center;
+            }
+            .text-center {
+                text-align: center !important;
+                font: 31px / 35px 'Sakkal-Majalla-Bold';
+            }
+            .language-contract-wrapper .lang-box.contract-box .col .cont-lang-box .lang-name {
+                display: block;
+                margin: 5px 0;
+                font: 31px/35px 'Sakkal-Majalla-Bold';
+            }
+        </style>
     </head>
     <body cz-shortcut-listen="true" class="" style="">
         <div class="language-contract-wrapper">
@@ -14,7 +59,7 @@
                     <div class="row text-center">
                         <div class="col">
                             <a onclick="PreviewContract('FE01GzYXaFF7s1Jq1WMyv/JysI49W1Z1vwZn9O1cUVw=')" class="cont-lang-box">
-                                <img src="/images/img-contract.png" alt="Img Contract">
+                                <img src="https://receipts.mohre.gov.ae/images/img-contract.png" alt="Img Contract">
                                 <span class="lang-name">English/عربي</span>
                             </a>
                         </div>
