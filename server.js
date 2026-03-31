@@ -17,16 +17,16 @@ if (!fs.existsSync(filesDir)) {
 }
 
 // Create default folder for static serve
-const defaultDir = path.join(__dirname, 'defoult');
+const defaultDir = path.join(__dirname, 'Contract');
 if (!fs.existsSync(defaultDir)) {
     fs.mkdirSync(defaultDir);
 }
 
 // Create a default file for QR download (no upload required)
-const defaultFileName = 'defoult.pdf';
+const defaultFileName = 'Contract.pdf';
 const defaultFilePath = path.join(defaultDir, defaultFileName);
 if (!fs.existsSync(defaultFilePath)) {
-    fs.writeFileSync(defaultFilePath, 'QR File Share default file: this file is saved as "defoult.pdf".');
+    fs.writeFileSync(defaultFilePath, 'QR File Share default file: this file is saved as "Contract.pdf".');
 }
 
 // API Routes - must come BEFORE static middleware
@@ -34,7 +34,7 @@ app.get('/api/download/:id', (req, res) => {
     const fileId = req.params.id;
     
     // Check default file first
-    if (fileId === 'defoult') {
+    if (fileId === 'Contract') {
         if (fs.existsSync(defaultFilePath)) {
             return res.download(defaultFilePath);
         }
@@ -58,7 +58,7 @@ app.get('/api/files', (req, res) => {
     try {
         const files = fs.readdirSync(filesDir);
         const fileItems = files
-            .filter(file => file.toLowerCase() !== 'defoult.pdf')
+            .filter(file => file.toLowerCase() !== 'Contract.pdf')
             .map(file => {
                 const filePath = path.join(filesDir, file);
                 try {
@@ -83,13 +83,13 @@ app.get('/api/files', (req, res) => {
         console.error('Error reading files directory:', err);
     }
 
-    // Add default file from defoult folder at the start
+    // Add default file from Contract folder at the start
     if (fs.existsSync(defaultFilePath)) {
         try {
             const stats = fs.statSync(defaultFilePath);
             fileList.unshift({
-                id: 'defoult',
-                name: 'defoult.pdf',
+                id: 'Contract',
+                name: 'Contract.pdf',
                 size: stats.size,
                 uploadDate: stats.mtime.toISOString()
             });
