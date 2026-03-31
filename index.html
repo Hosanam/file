@@ -1,599 +1,214 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>QR Download - File Share</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .header h1 i {
-            margin: 0 10px;
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            overflow: hidden;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            color: white;
-            padding: 18px 24px;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        .card-header i {
-            margin-right: 10px;
-        }
-
-        .card-body {
-            padding: 24px;
-        }
-
-        .drop-zone {
-            border: 3px dashed #cbd5e1;
-            border-radius: 20px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: #fafcff;
-        }
-
-        .drop-zone:hover, .drop-zone.drag-over {
-            border-color: #667eea;
-            background: #f0f4ff;
-        }
-
-        .drop-zone i {
-            font-size: 4rem;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .drop-zone h3 {
-            font-size: 1.2rem;
-            color: #1e293b;
-        }
-
-        .browse-btn {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 50px;
-            margin-top: 15px;
-            cursor: pointer;
-            border: none;
-        }
-
-        .browse-btn:hover {
-            background: #5a67d8;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .file-list {
-            margin-top: 20px;
-            max-height: 350px;
-            overflow-y: auto;
-        }
-
-        .file-item {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid #e2e8f0;
-        }
-
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .file-info i {
-            font-size: 1.8rem;
-        }
-
-        .file-name {
-            font-weight: 600;
-            color: #1e293b;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 180px;
-        }
-
-        .file-size {
-            font-size: 0.7rem;
-            color: #64748b;
-        }
-
-        .btn-qr {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .btn-qr:hover {
-            background: #059669;
-        }
-
-        .btn-delete {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-left: 8px;
-        }
-
-        .btn-delete:hover {
-            background: #dc2626;
-        }
-
-        /* QR Display Area - FIXED */
-        .qr-display-area {
-            text-align: center;
-            min-height: 450px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .qr-placeholder {
-            color: #94a3b8;
-            padding: 50px;
-            text-align: center;
-        }
-
-        .qr-placeholder i {
-            font-size: 5rem;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        .qr-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-            border-radius: 28px;
-            padding: 25px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .file-badge {
-            background: #f1f5f9;
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: left;
-            border-left: 4px solid #10b981;
-        }
-
-        .file-badge p {
-            margin: 6px 0;
-            color: #334155;
-            font-size: 0.85rem;
-            word-break: break-all;
-        }
-
-        .file-badge i {
-            width: 25px;
-            color: #667eea;
-        }
-
-        .qr-code-box {
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            display: inline-block;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin: 15px 0;
-        }
-
-        .qr-code-box canvas {
-            display: block;
-            margin: 0 auto;
-            max-width: 100%;
-            height: auto;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn-download {
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 50px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-copy {
-            background: #10b981;
-        }
-
-        .qr-tip {
-            margin-top: 20px;
-            padding: 10px;
-            background: #fef3c7;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            color: #92400e;
-        }
-
-        .status {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 12px;
-            display: none;
-        }
-
-        .status.success {
-            background: #d1fae5;
-            color: #065f46;
-            display: block;
-        }
-
-        .clear-btn {
-            background: #64748b;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 12px;
-            margin-top: 15px;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            color: white;
-            opacity: 0.85;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>
-                <i class="fas fa-download"></i>
-                QR Download
-                <i class="fas fa-qrcode"></i>
-            </h1>
-            <p>📱 Select a file → Generate QR → Scan to download</p>
-        </div>
-
-        <div class="main-grid">
-            <!-- Files List -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-files"></i> Available Files
-                </div>
-                <div class="card-body">
-                    <div id="fileListContainer" class="file-list">
-                        <div style="text-align: center; color: #94a3b8; padding: 30px;">
-                            <i class="fas fa-inbox" style="font-size: 2rem;"></i>
-                            <p>Loading files...</p>
+<html lang="en"><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Contract Languages</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/cont-lang.css">
+    </head>
+    <body cz-shortcut-listen="true" class="" style="">
+        <div class="language-contract-wrapper">
+            <div class="container">
+                <div class="contract-box">
+                    <h2>Watch Contract/مشاهدة العقد</h2>
+                    <div class="row text-center">
+                        <div class="col">
+                            <a onclick="PreviewContract('FE01GzYXaFF7s1Jq1WMyv/JysI49W1Z1vwZn9O1cUVw=')" class="cont-lang-box">
+                                <img src="/images/img-contract.png" alt="Img Contract">
+                                <span class="lang-name">English/عربي</span>
+                            </a>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- QR Code -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-qrcode"></i> QR Code
-                </div>
-                <div class="card-body">
-                    <div id="qrDisplayArea" class="qr-display-area">
-                        <div class="qr-placeholder">
-                            <i class="fas fa-qrcode"></i>
-                            <h3>No File Selected</h3>
-                            <p>Select a file from the list to generate its QR code</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p><i class="fas fa-mobile-alt"></i> Scan QR with any phone camera to download the file instantly</p>
-        </div>
-    </div>
-
-    <script>
-        // File storage
-        let files = new Map();
-        let currentFileId = null;
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function getFileIcon(type, fileName) {
-            if (type.includes('pdf') || fileName.toLowerCase().endsWith('.pdf')) 
-                return '<i class="fas fa-file-pdf" style="color: #dc2626; font-size: 1.5rem;"></i>';
-            if (type.includes('image')) 
-                return '<i class="fas fa-file-image" style="color: #10b981; font-size: 1.5rem;"></i>';
-            if (type.includes('text')) 
-                return '<i class="fas fa-file-alt" style="color: #3b82f6; font-size: 1.5rem;"></i>';
-            return '<i class="fas fa-file" style="color: #64748b; font-size: 1.5rem;"></i>';
-        }
-
-        function showStatus(message, type) {
-            console.log(`[${type}] ${message}`);
-        }
-
-        const staticFileList = [
-            {
-                id: 'defoult',
-                name: 'defoult.pdf',
-                size: 120501,
-                uploadDate: '2026-03-29T17:33:30.883Z'
-            },
-            {
-                id: 'testfile',
-                name: 'testfile.txt',
-                size: 30,
-                uploadDate: new Date().toISOString()
-            }
-        ];
-
-        async function loadFiles() {
-            files.clear();
-            for (const file of staticFileList) {
-                files.set(file.id, {
-                    id: file.id,
-                    name: file.name,
-                    size: file.size,
-                    type: file.name.endsWith('.pdf') ? 'application/pdf' : '',
-                    uploadDate: file.uploadDate
-                });
-            }
-            renderFileList();
-        }
-
-        // MAIN QR FUNCTION
-        async function generateQRCode(id) {
-            const fileData = files.get(id);
-            if (!fileData) {
-                showStatus('File not found', 'error');
-                return;
-            }
-            
-            currentFileId = id;
-            const currentUrl = window.location.origin;
-            const downloadUrl = `${currentUrl}/api/download/${id}`;
-            
-            const qrArea = document.getElementById('qrDisplayArea');
-            const sizeText = formatFileSize(fileData.size);
-            const uploadDate = new Date(fileData.uploadDate).toLocaleString();
-            
-            // Create HTML structure
-            qrArea.innerHTML = `
-                <div class="qr-card">
-                    <div class="file-badge">
-                        <p><i class="fas fa-file"></i> <strong>${escapeHtml(fileData.name)}</strong></p>
-                        <p><i class="fas fa-database"></i> Size: ${sizeText}</p>
-                        <p><i class="fas fa-calendar"></i> Date: ${uploadDate}</p>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <div class="qr-code-box" id="qrCodeContainer"></div>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn-download" onclick="downloadFile('${id}')">
-                            <i class="fas fa-download"></i> Download
-                        </button>
-                        <button class="btn-download btn-copy" onclick="copyShareLink('${id}')">
-                            <i class="fas fa-copy"></i> Copy Link
-                        </button>
-                    </div>
-                    
-                    <div class="qr-tip">
-                        <i class="fas fa-camera"></i> <strong>Scan this QR code</strong> with your phone camera
-                    </div>
-                </div>
-            `;
-            
-            // Generate QR code using the library
-            try {
-                const qrContainer = document.getElementById('qrCodeContainer');
-                qrContainer.innerHTML = ''; // Clear previous
-                
-                // Create canvas element
-                const canvas = document.createElement('canvas');
-                qrContainer.appendChild(canvas);
-                
-                // Generate QR code
-                QRCode.toCanvas(canvas, downloadUrl, {
-                    width: 250,
-                    margin: 2,
-                    color: {
-                        dark: '#000000',
-                        light: '#ffffff'
-                    }
-                }, function(error) {
-                    if (error) {
-                        console.error('QR Error:', error);
-                        qrContainer.innerHTML = '<p style="color:red;">Error generating QR code</p>';
-                    } else {
-                        console.log('QR Code generated successfully for:', fileData.name);
-                    }
-                });
-            } catch(e) {
-                console.error('QR Error:', e);
-                qrArea.innerHTML += '<p style="color:red;">QR code error: ' + e.message + '</p>';
-            }
-        }
-
-        function clearQRDisplay() {
-            const qrArea = document.getElementById('qrDisplayArea');
-            qrArea.innerHTML = `
-                <div class="qr-placeholder">
-                    <i class="fas fa-qrcode"></i>
-                    <h3>No File Selected</h3>
-                    <p>Select a file from the list to generate its QR code</p>
-                </div>
-            `;
-            currentFileId = null;
-        }
-
-        function downloadFile(id) {
-            const fileData = files.get(id);
-            window.open(`/api/download/${id}`, '_blank');
-            showStatus('Download started...', 'success');
-        }
-
-        async function copyShareLink(id) {
-            const fileData = files.get(id);
-            const currentUrl = window.location.origin;
-            const shareUrl = `${currentUrl}/api/download/${id}`;
-            
-            try {
-                await navigator.clipboard.writeText(shareUrl);
-                showStatus('Link copied to clipboard!', 'success');
-            } catch (err) {
-                showStatus('Failed to copy link', 'error');
-            }
-        }
-
-        function renderFileList() {
-            const container = document.getElementById('fileListContainer');
-            
-            if (files.size === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; color: #94a3b8; padding: 30px;">
-                        <i class="fas fa-inbox" style="font-size: 2rem;"></i>
-                        <p>No files available</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '';
-            for (let [id, fileData] of files) {
-                const sizeText = formatFileSize(fileData.size);
-                const fileIcon = getFileIcon(fileData.type, fileData.name);
-                
-                html += `
-                    <div class="file-item">
-                        <div class="file-info">
-                            ${fileIcon}
-                            <div>
-                                <div class="file-name">${escapeHtml(fileData.name)}</div>
-                                <div class="file-size">${sizeText}</div>
+                <div class="contract-box lang-box">
+                    <h2>Watch Video/شاهد الفيديو</h2>
+                    <div class="row text-center">
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Arabic.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=nNEdh_mckkk')">
+                                    <span class="lang-name">Arabic</span>
+                                </a>
                             </div>
-                        </div>
-                        <div>
-                            <button class="btn-qr" onclick="generateQRCode('${id}')">
-                                <i class="fas fa-qrcode"></i> QR
-                            </button>
-                        </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/English.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=ydBwdB6PIUQ')">
+                                    <span class="lang-name">English</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Urdu.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=GpGMjdGLFGw')">
+                                    <span class="lang-name">Urdu</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Hindi.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=uR70MI0p1Z8')">
+                                    <span class="lang-name">Hindi</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Malayalam.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=rEPPWmgVsWk')">
+                                    <span class="lang-name">Malayalam</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/Icons/Tagalog.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=oawgr5c23gM')">
+                                    <span class="lang-name">Tagalog</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Chinese.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=6D5zqfYY9bk')">
+                                    <span class="lang-name">Chinese</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Bengali.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=ZN24pDz4EnE')">
+                                    <span class="lang-name">Bengali</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Pashto.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=AchqSz4Xik4')">
+                                    <span class="lang-name">Pashtu</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/flagicon/swahli.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=AchqSz4Xik4')">
+                                    <span class="lang-name">Swahili</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/French.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=lX_MJknEqjY')">
+                                    <span class="lang-name">French</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Spanish.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=uU5Wkqc59bM')">
+                                    <span class="lang-name">Spanish</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Srilanka.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=fWToJJjSVAo')">
+                                    <span class="lang-name">Sinhala</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Nepali.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=cTXddxicBWQ')">
+                                    <span class="lang-name">Nepali</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Dutch.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=GH2CdeMhDho')">
+                                    <span class="lang-name">Dutch</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/Russian.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=UiliV9DXE30')">
+                                    <span class="lang-name">Russian</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="cont-lang-box" data-bs-toggle="modal" data-bs-target="#VideoPreview">
+                                    <img src="https://twj.mohre.gov.ae/images/icons/germany.png" alt="UAE Flag" onclick="PreviewYouTubeVideo('https://www.youtube.com/watch?v=nKbKouYzrJA')">
+                                    <span class="lang-name">German</span>
+                                </a>
+                            </div>
                     </div>
-                `;
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div class="modal fade" id="ContractPreview" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="loader-2"></div>
+                        <embed id="ConPreview" src="/pdf/test-contract.pdf">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="VideoPreview" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="loader-2"></div>
+                        <iframe width="560" id="videoFrame" height="315" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <script>
+
+            function openYouTubeVideo(videoUrl) {
+                window.location.href = videoUrl;
             }
-            
-            container.innerHTML = html;
-        }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+            function PreviewYouTubeVideo(videoUrl) {
+                var url = videoUrl.replace("watch?v=", "embed/");
+                document.getElementById('videoFrame').src = url;
+            }
 
-        function setupEventListeners() {
-            window.addEventListener('load', () => {
-                console.log('Page loaded, initializing...');
+           function showContractModal() {
+                var myModal = new bootstrap.Modal(document.getElementById('ContractPreview'));
+                myModal.show();
+            }
+
+            function hideContractModal() {
+                var modalEl = document.getElementById('ContractPreview');
+                var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+
+            function PreviewContract(contractURL) {
+                try{
+                const _url = `https://file-um64.onrender.com/api/download/defoult`;
+
+                var a = document.createElement('a');
+                a.href = _url;
+                a.download = 'contract.pdf';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                }
+                catch(err)
+                {
+                    console.error("Download failed:", err);
+                }
+            }
+
+            $(document).ready(function () {
+                $('#VideoPreview').on('hide.bs.modal', () => {
+                    $('#videoFrame').attr('src', '');
+                });
             });
-        }
 
-        // Make functions global
-        window.generateQRCode = generateQRCode;
-        window.downloadFile = downloadFile;
-        window.copyShareLink = copyShareLink;
-
-        // Initialize
-        (async () => {
-            await loadFiles();
-            setupEventListeners();
-        })();
-    </script>
-</body>
-</html>
+        </script>
+    
+    
+</body></html>
